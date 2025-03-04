@@ -16,4 +16,5 @@
 - html/css website:
 - info/landing page
 - page for the map
+- maybe a big HST clock on map page to make it seem live and up to date
 - make it look cool
