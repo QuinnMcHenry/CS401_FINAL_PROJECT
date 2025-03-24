@@ -21,14 +21,13 @@
     <script>
         let map = L.map('map').setView([21.485, 202.017], 11);
 
-        // Load Mapbox tiles
         L.tileLayer('https://api.mapbox.com/styles/v1/quinndaniel11/clp0j258c00cn01of0uzodeg3/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoicXVpbm5kYW5pZWwxMSIsImEiOiJjbTd0djgzNG0yMDhoMmtwdnBxb3V3d3E4In0.aqOJFJsCFNI_cBcmZ46f7A', {
             attribution: '&copy; Mapbox',
             minZoom: 11,
             maxZoom: 19
         }).addTo(map);
 
-        let markers = {};  // Store markers by vehicle ID
+        let markers = {};  // store markers by vehicle ID
 
         function updateMap() {
             $.getJSON('/arrivals', function(data) {
@@ -38,30 +37,29 @@
                     let vehicle = arrival.vehicle;
 
                     if (!markers[vehicle]) {
-                        // Create new marker if it doesn't exist
+                        // create new marker if it doesn't exist
                         let marker = L.marker([lat, lon]).addTo(map)
                             .bindPopup(`Route: ${arrival.route}<br>Vehicle: ${vehicle}`);
                         markers[vehicle] = marker;
                     } else {
-                        // Update marker position
+                        // update marker position
                         markers[vehicle].setLatLng([lat, lon]);
                     }
                 });
             });
         }
 
-        // Fetch and update bus positions every 2 seconds
         setInterval(() => {
-            fetch('/arrivals')  // Explicitly specify port 5000
+            fetch('/arrivals')  
             .then(response => response.json())
             .then(data => {
-                console.log(data);  // Debugging line
+                console.log(data);  
                 updateMap(data);
     })
         .catch(error => console.error('Fetch error:', error));
         }, 2000);
 
-        updateMap();  // Initial load
+        updateMap(); 
     </script>
 </body>
 </html>
