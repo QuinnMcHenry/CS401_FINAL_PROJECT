@@ -1,26 +1,54 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
+from flask_cors import CORS
 import requests
 
 app = Flask(__name__)
+CORS(app, resources={r"/arrivals": {"origins": "http://127.0.0.1:5500"}})
+
+@app.route("/")
+def index():
+    return render_template("map.html")
 
 @app.route('/arrivals', methods=['GET'])
 def get_bus_coords():
     API_KEY = "F02CFCAC-3067-45DB-835E-A102C773D6F2"
-    stop_ID = request.args.get('stop', 2)  
+    stop_ID = request.args.get('stop', 46)  
 
-    url = f"http://api.thebus.org/arrivals/?key={API_KEY}&stop={stop_ID}"
+    url = f"http://api.thebus.org/arrivalsJSON/?key={API_KEY}&stop={stop_ID}"
+    
+    """
+format:
 
+data = {
+        "arrivals" : [
+            { ...,
+              ...,
+              ... 
+            },
+
+            { ...,
+              ...,
+              ...
+            }
+        ],
+        "stop_ID" = __,
+        "timestamp" = ____
+    }
+    """
     try:
         response = requests.get(url)
 
         data = response.json()
 
-        print(jsonify(data))
+        data["arrivals"] = [arrival for arrival in data["arrivals"] 
+                    if float(arrival["latitude"]) != 0 and float(arrival["longitude"]) != 0]
+                
         return jsonify(data)
 
     except requests.exceptions.RequestException as e:
         return jsonify({'error': f'An error occurred: {str(e)}'}), 500
 
-# Ensure this is correctly placed outside the function
+
+
 if __name__ == '__main__':
     app.run(debug=True)
