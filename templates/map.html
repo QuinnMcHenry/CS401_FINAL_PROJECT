@@ -6,7 +6,6 @@
     <title>Live Bus Tracker</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-    <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <style>
         #map {
@@ -30,6 +29,14 @@
 
         let markers = {};  // store markers by vehicle ID
 
+
+        var busIcon = L.icon({
+            iconUrl: "/static/88ddb2f3138e79ff0ad212f5a6e14e23.png",  
+            iconSize: [32, 32],  // width and height in pixels
+            iconAnchor: [16, 16],  // point of the icon that corresponds to the marker location (center bottom)
+            popupAnchor: [0, -32]
+        });
+
         function updateMap(data) {
             $.getJSON('/arrivals', function(data) {
                 data.arrivals.forEach(arrival => {
@@ -39,7 +46,7 @@
 
                     if (!markers[vehicle]) {
                         // create new marker if it doesn't exist
-                        let marker = L.marker([lat, lon]).addTo(map)
+                        let marker = L.marker([lat, lon], {icon: busIcon}).addTo(map)
                             .bindPopup(`Vehicle: ${vehicle}`);
                         markers[vehicle] = marker;
                     } else {
@@ -49,7 +56,6 @@
                 });
             });
         }
-
         setInterval(() => {
             fetch('/arrivals')  
             .then(response => response.json())
@@ -58,7 +64,7 @@
                 updateMap(data);
     })
         .catch(error => console.error('Fetch error:', error));
-        }, 2000);
+        }, 1000);
     </script>
 </body>
 </html>
