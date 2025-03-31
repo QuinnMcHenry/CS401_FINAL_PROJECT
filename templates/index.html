@@ -23,6 +23,9 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
   <div class="w3-bar w3-black w3-card w3-left-align w3-large">
     <a class="w3-bar-item w3-button w3-hide-medium w3-hide-large w3-right w3-padding-large w3-hover-white w3-large w3-yellow" href="javascript:void(0);" onclick="myFunction()" title="Toggle Navigation Menu"><i class="fa fa-bars"></i></a>
     <a href="index.html" class="w3-bar-item w3-button w3-padding-large w3-white">Home</a>
+    <a>Where am I?</a>
+    <button id="getLocationBtn">Find me</button>
+    <p id="location"></p>
     <a href="map.html" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">Live Bus Tracker</a>
     <a href="#" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">Link 2</a>
     <a href="#" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">Link 3</a>
@@ -108,6 +111,44 @@ function myFunction() {
     x.className = x.className.replace(" w3-show", "");
   }
 }
+document.getElementById("getLocationBtn").addEventListener("click", function () {
+        // Check if the browser supports Geolocation
+        if (navigator.geolocation) {
+            // Request location permission
+            navigator.geolocation.getCurrentPosition(getUserLocation, showError);
+            getUserLocation()
+        } else {
+            document.getElementById("location").innerHTML = "Geolocation is not supported by this browser.";
+        }
+    });
+function getUserLocation(){
+            if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function(position){
+                let userLat = positions.coords.latitude;
+                let userLng = positions.coords.longitude;
+                
+            });
+            } else {
+            document.getElementById("location").innerHTML = "Geolocation is not supported by this browser.";
+            }
+        }
+function showError(error){
+  switch (error.code) {
+            case error.PERMISSION_DENIED:
+                document.getElementById("location").innerHTML = "You denied the request for location. Please enable it in your browser settings.";
+                break;
+            case error.POSITION_UNAVAILABLE:
+                document.getElementById("location").innerHTML = "Location information is unavailable.";
+                break;
+            case error.TIMEOUT:
+                document.getElementById("location").innerHTML = "The request to get your location timed out.";
+                break;
+            case error.UNKNOWN_ERROR:
+                document.getElementById("location").innerHTML = "An unknown error occurred.";
+                break;
+        }
+    }
+
 </script>
 
 </body>
