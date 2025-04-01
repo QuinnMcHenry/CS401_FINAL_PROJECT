@@ -56,6 +56,21 @@
                 });
             });
         }
+
+        function findStop(userLat, userLon) {
+            $.getJSON('stops.json', function(data) {
+                data.entry.forEach(entry => {
+                    let stopLat = parseFloat(entry.lat);
+                    let stopLon = parseFloat(entry.lon);
+                    let stopID = entry.id;
+                    var from = [userLat, userLon];
+                    var to = [stopLat, stopLon];
+                    res = Math.min(res, from.distanceTo(to).toFixed(0)/1000);
+                    
+                })
+            });
+        }
+
         setInterval(() => {
             fetch('/arrivals')  
             .then(response => response.json())
