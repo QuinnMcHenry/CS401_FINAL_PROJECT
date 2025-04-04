@@ -11,6 +11,10 @@ def index():
 def get_map():
     return render_template("map.html")
 
+@app.route("/about")
+def get_map():
+    return render_template("about.html")
+
 @app.route('/arrivals', methods=['GET'])
 def get_bus_coords():
     API_KEY = "F02CFCAC-3067-45DB-835E-A102C773D6F2"
