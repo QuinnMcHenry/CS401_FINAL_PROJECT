@@ -1,0 +1,34 @@
+/* Make the sidebar with the dropdown always visible and side-by-side */
+#sidebar {
+    z-index: 999;  /* Ensure it stays above the map */
+    background-color: rgba(255, 255, 255, 0.8);  /* Slight transparency */
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Adjust the dropdown width */
+#busStopSelect {
+    width: 200px;
+    padding: 5px;
+    font-size: 14px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    display: block;
+}
+
+
+/* Container to hold both dropdown and map */
+.container {
+    display: flex;
+    justify-content: space-between; /* space between the dropdown and the map */
+    align-items: center; /* center vertically if needed */
+    width: 100%;
+}
+
+
+/* Map styling */
+#map {
+    height: 600px;
+    width: 70%; /* Adjust the width to take up less space */
+}
