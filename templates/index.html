@@ -30,7 +30,7 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
       <img src="{{ url_for('static', filename='thebus.png') }}" alt="Home" style="height: 40px; margin-top: -1px;">
     </a>
     <a href="http://127.0.0.1:5000/about" class="w3-bar-item w3-button w3-padding-large w3-white">About</a>
-    <a href="" class="w3-bar-item w3-button w3-padding-large w3-white">Contact Us</a>
+    <a href="http://127.0.0.1:5000/contact" class="w3-bar-item w3-button w3-padding-large w3-white">Contact Us</a>
   </div>
 
   <!-- Navbar on small screens -->
@@ -50,7 +50,7 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
     <!-- Card 1 -->
     <div class="col-md-4 mb-4">
       <div class="card mx-auto" style="width: 18rem;">
-        <img src="https://via.placeholder.com/286x180" class="card-img-top" alt="Bus Tracker">
+        <img src="" class="card-img-top" alt="Bus Tracker">
         <div class="card-body">
           <h5 class="card-title">Track Your Bus</h5>
           <p class="card-text">See real-time locations of buses near you.</p>
@@ -62,7 +62,7 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
     <!-- Card 2 -->
     <div class="col-md-4 mb-4">
       <div class="card mx-auto" style="width: 18rem;">
-        <img src="https://via.placeholder.com/286x180" class="card-img-top" alt="Route Info">
+        <img src="" class="card-img-top" alt="Route Info">
         <div class="card-body">
           <h5 class="card-title">Route Info</h5>
           <p class="card-text">Find detailed information about your bus route.</p>
@@ -74,7 +74,7 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
     <!-- Card 3 -->
     <div class="col-md-4 mb-4">
       <div class="card mx-auto" style="width: 18rem;">
-        <img src="https://via.placeholder.com/286x180" class="card-img-top" alt="Service Alerts">
+        <img src="" class="card-img-top" alt="Service Alerts">
         <div class="card-body">
           <h5 class="card-title">Service Alerts</h5>
           <p class="card-text">Stay updated on delays or service changes.</p>
@@ -89,7 +89,7 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
 
 
 <!-- Carousel -->
-<div id="carouselExample" class="carouselslide" data-bs-ride="carousel" data-bs-interval="2500">
+<div id="carouselExample" class="carousel slide" data-bs-ride="carousel" data-bs-interval="2500">
   <div class="carousel-inner">
     <div class="carousel-item active">
       <img src="static/buspic1.jpg" class="d-block w-100" style="height: 700px; object-fit: cover;" alt="...">
@@ -105,17 +105,24 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
     </div>
   </div>
 
-  <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev" style="top: 50%; transform: translateY(-50%);">
+  <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">
     <span class="carousel-control-prev-icon" aria-hidden="true"></span>
     <span class="visually-hidden">Previous</span>
   </button>
-  <button class="carousel-control-next" type="button" data-bs-target="#carouselExample" data-bs-slide="next" style="top: 50%; transform: translateY(-50%);">
+  <button class="carousel-control-next" type="button" data-bs-target="#carouselExample" data-bs-slide="next">
     <span class="carousel-control-next-icon" aria-hidden="true"></span>
     <span class="visually-hidden">Next</span>
   </button>
 </div>
 
-
+<style>
+.carousel-control-prev,
+.carousel-control-next {
+  top: 50%; /* Center vertically */
+  transform: translateY(-50%); /* Adjust position to ensure centering */
+  z-index: 1; /* Ensure the buttons are above the images */
+}
+</style>
 
 <!-- Footer -->
 <footer class="w3-container w3-padding-64 w3-center w3-opacity">  

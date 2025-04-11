@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify, render_template
-import requests
+import requests # type: ignore
 
 app = Flask(__name__)
 
@@ -14,6 +14,10 @@ def get_map():
 @app.route("/about")
 def get_about():
     return render_template("about.html")
+
+@app.route("/contact")
+def get_contact():
+    return render_template("contact.html")
 
 @app.route('/arrivals', methods=['GET'])
 def get_bus_coords():
