@@ -8,6 +8,7 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="/static/styles.css">
 <style>
 body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
 .w3-bar,h1,button {font-family: "Montserrat", sans-serif}
@@ -15,6 +16,15 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
 </style>
 </head>
 <body>
+  
+  <div class="w3-bar w3-black w3-card w3-left-align w3-large">
+  <a class="w3-bar-item w3-button w3-hide-medium w3-hide-large w3-right w3-padding-large w3-hover-white w3-large w3-yellow" href="javascript:void(0);" onclick="myFunction()" title="Toggle Navigation Menu"><i class="fa fa-bars"></i></a>
+  <a href="http://127.0.0.1:5000/" class="w3-bar-item w3-button w3-padding-large w3-white" style="height: 51px; overflow: visible;">
+    <img src="{{ url_for('static', filename='thebus.png') }}" alt="Home" style="height: 40px; margin-top: -1px;">
+  </a>
+  <a href="http://127.0.0.1:5000/about" class="w3-bar-item w3-button w3-padding-large w3-white">About</a>
+  <a href="" class="w3-bar-item w3-button w3-padding-large w3-white">Contact Us</a>
+</div>
 
 
 <!-- First Grid -->
@@ -22,11 +32,14 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
     <div class="w3-content">
       <div class="w3-twothird">
         <h1>About Us</h1>
+
+        <h3 class="w3-text-black"></h3>
+        <h5 class="w3-text-grey"></h5>
+
         <h5 class="w3-padding-32">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</h5>
   
-        <p class="w3-text-grey">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Excepteur sint
-          occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco
-          laboris nisi ut aliquip ex ea commodo consequat.</p>
+
+        
       </div>
   
       <div class="w3-third w3-center">

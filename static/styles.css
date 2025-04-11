@@ -29,6 +29,14 @@
 
 /* Map styling */
 #map {
-    height: 600px;
-    width: 70%; /* Adjust the width to take up less space */
+    height: 800px;
+    width: 80%; /* Adjust the width to take up less space */
+    border: 2px solid black;
+}
+
+#busTrackerTitle{
+    border-bottom: 3px solid lightblue;
+    padding: 10px;
+    text-align: center;
+    border-radius: 0px;
 }
