@@ -19,6 +19,14 @@ def get_about():
 def get_contact():
     return render_template("contact.html")
 
+@app.route("/address")
+def get_address():
+    return render_template("address.html")
+
+@app.route("/models")
+def get_models():
+    return render_template("models.html")
+
 @app.route('/arrivals', methods=['GET'])
 def get_bus_coords():
     API_KEY = "F02CFCAC-3067-45DB-835E-A102C773D6F2"

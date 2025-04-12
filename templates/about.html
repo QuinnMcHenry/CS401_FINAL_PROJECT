@@ -27,6 +27,7 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
   <a href="http://127.0.0.1:5000/" class="w3-bar-item w3-button w3-padding-large w3-white" style="height: 51px; overflow: visible;">
     <img src="{{ url_for('static', filename='thebus.png') }}" alt="Home" style="height: 40px; margin-top: -1px;">
   </a>
+  <a href="http://127.0.0.1:5000/models" class="w3-bar-item w3-button w3-padding-large w3-white">Features</a>
   <a href="http://127.0.0.1:5000/about" class="w3-bar-item w3-button w3-padding-large w3-white">About</a>
   <a href="http://127.0.0.1:5000/contact" class="w3-bar-item w3-button w3-padding-large w3-white">Contact Us</a>
 </div>
@@ -50,4 +51,12 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
       </div>
     </div>
   </div>
+
+  <header class="text-center" id="model_menu" style="background-color: #ebbd34; padding-top: 150px; padding-bottom: 100px;">
+    <h1 class="learn-models">Model Collection</h1>
+    <h4>Our ever expansive model collection is home to the world's best bus tracking and address searching queries. </h4>
+    <div class="flex-parent-jc-left">
+      <button id="learnModels" class="btn btn-dark btn-lg mt-3" onclick="getModels()">Try Our Models for Yourself!</button>
+    </div>
+  </header>
   

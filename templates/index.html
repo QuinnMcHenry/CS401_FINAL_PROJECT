@@ -29,6 +29,7 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
     <a href="http://127.0.0.1:5000/" class="w3-bar-item w3-button w3-padding-large w3-white" style="height: 51px; overflow: visible;">
       <img src="{{ url_for('static', filename='thebus.png') }}" alt="Home" style="height: 40px; margin-top: -1px;">
     </a>
+    <a href="http://127.0.0.1:5000/models" class="w3-bar-item w3-button w3-padding-large w3-white">Features</a>
     <a href="http://127.0.0.1:5000/about" class="w3-bar-item w3-button w3-padding-large w3-white">About</a>
     <a href="http://127.0.0.1:5000/contact" class="w3-bar-item w3-button w3-padding-large w3-white">Contact Us</a>
   </div>
@@ -44,46 +45,6 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
   <button id="getLocationBtn" class="btn btn-dark btn-lg mt-3" onclick="getUserLocation()">Find My Bus</button>
 </header>
 
-<!-- Cards Section -->
-<div class="container mt-5">
-  <div class="row justify-content-center">
-    <!-- Card 1 -->
-    <div class="col-md-4 mb-4 d-flex justify-content-center">
-      <div class="card" style="width: 18rem;">
-        <img src="static/bustrackpic.jpeg" class="card-img-top" alt="Bus Tracker">
-        <div class="card-body">
-          <h5 class="card-title">Track Your Bus</h5>
-          <p class="card-text">See real-time locations of buses near you.</p>
-          <a href="#" class="btn btn-primary">Track Now</a>
-        </div>
-      </div>
-    </div>
-
-    <!-- Card 2 -->
-    <div class="col-md-4 mb-4 d-flex justify-content-center">
-      <div class="card" style="width: 18rem;">
-        <img src="" class="card-img-top" alt="Model 2">
-        <div class="card-body">
-          <h5 class="card-title">Model 2</h5>
-          <p class="card-text">Text Here</p>
-          <a href="#" class="btn btn-primary">Text Here</a>
-        </div>
-      </div>
-    </div>
-
-    <!-- Card 3 -->
-    <div class="col-md-4 mb-4 d-flex justify-content-center">
-      <div class="card" style="width: 18rem;">
-        <img src="" class="card-img-top" alt="Model 3">
-        <div class="card-body">
-          <h5 class="card-title">Model 3</h5>
-          <p class="card-text">Text Here</p>
-          <a href="#" class="btn btn-primary">Text Here</a>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
 
 
 
@@ -113,6 +74,14 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
     <span class="visually-hidden">Next</span>
   </button>
 </div>
+
+<header class="text-center" id="model_menu" style="background-color: #ebbd34; padding-top: 150px; padding-bottom: 100px;">
+  <h1 class="learn-models">Model Collection</h1>
+  <h4>Our ever expansive model collection is home to the world's best bus tracking and address searching queries. </h4>
+  <div class="flex-parent-jc-left">
+    <button id="learnModels" class="btn btn-dark btn-lg mt-3" onclick="getModels()">Try Our Models for Yourself!</button>
+  </div>
+</header>
 
 <style>
 .carousel-control-prev,
@@ -162,7 +131,28 @@ document.getElementById("getLocationBtn").addEventListener("click", function () 
       document.getElementById("locationOutput").textContent = "Location permission is currently blocked. Please reset it in your browser settings.";
     }
   });
+
 }
+})
+
+document.getElementById("liveBusTracker").addEventListener("click", function () {
+        // Check if the browser supports Geolocation
+        if (navigator.geolocation) {
+          navigator.permissions.query({ name: 'geolocation' }).then(function(result) {
+    if (result.state == 'granted') {
+      if (confirm) {
+
+        navigator.geolocation.getCurrentPosition(getUserLocation, showError);
+      }
+    } else if (result.state === 'prompt') {
+      // Trigger the real location prompt
+      navigator.geolocation.getCurrentPosition(getUserLocation, showError);
+    } else {
+      document.getElementById("locationOutput").textContent = "Location permission is currently blocked. Please reset it in your browser settings.";
+    }
+  });
+}
+
 })
     function getUserLocation(position) {
 
@@ -192,6 +182,13 @@ function showError(error){
         }
     }
 
+    document.getElementById("learnModels").addEventListener("click", function () {
+      getModels()
+    })
+
+    function getModels(){
+        window.location.href = '/models';
+      }
 </script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
