@@ -35,10 +35,12 @@
 }
 
 #busTrackerTitle{
-    border-bottom: 3px solid lightblue;
+    border-bottom: 2px solid black;
     padding: 10px;
     text-align: center;
     border-radius: 0px;
+    font-size: 45px;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
 }
 
 header{
@@ -55,9 +57,31 @@ header{
     
 }
 
+#addressTop{
+    border: 2px solid black;
+    border-radius: 100px;
+    font-size: 60px;
+    font-style: italic;
+}
 
-.flex-parent-jc-left {
+
+.container-mt-5 {
     display: flex;
     justify-content:space-evenly;
     align-items: center;
   }
+
+.searchBar{
+    align-self: center;
+}
+
+#aboutSectionTopHeader{
+    border-top: 5px solid black;
+}
+
+.address-info{
+    text-align: center;
+    border-bottom: 1px solid black;
+    font-size: 30px;
+
+}
