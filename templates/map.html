@@ -30,15 +30,14 @@
         <a href="http://127.0.0.1:5000/" class="w3-bar-item w3-button w3-padding-large w3-white" style="height: 51px; overflow: visible;">
           <img src="{{ url_for('static', filename='thebus.png') }}" alt="Home" style="height: 40px; margin-top: -1px;">
         </a>
-        <a href="http://127.0.0.1:5000/models" class="w3-bar-item w3-button w3-padding-large w3-white">Features</a>
         <a href="http://127.0.0.1:5000/about" class="w3-bar-item w3-button w3-padding-large w3-white">About</a>
         <a href="http://127.0.0.1:5000/contact" class="w3-bar-item w3-button w3-padding-large w3-white">Contact Us</a>
       </div>
   
-    <header id="busTrackerTitle", style="background-color: #ebbd34; padding-top: 50px; padding-bottom: 10px;">Live Bus Tracker</header>
+    <h1 id="busTrackerTitle"> <center>Live Bus Tracker</center></h1>
       
 
-    <div class="container" style="padding-top: 40px;">
+    <div class="container">
         <div id="sidebar">
             <select id="busStopSelect">
             </select>
@@ -112,12 +111,12 @@ const userLon = parseFloat(localStorage.getItem('userLon'));
 fetch('/static/stops.json')  // Adjust the path if needed
     .then(response => response.json())
     .then(data => {
-        // 3. Compute distance from user to each stop
+        //distance from user coords to each stop
         const stopsWithDistance = data.map(stop => {
             const stopLat = parseFloat(stop.lat);
             const stopLon = parseFloat(stop.lon);
             const distance = haversine(userLat, userLon, stopLat, stopLon); // in km
-            return { ...stop, distance }; // Keep stop info + distance
+            return { ...stop, distance }; // append distance to stop obj
         });
 
         // sort stops by distance (closest first)
@@ -125,6 +124,7 @@ fetch('/static/stops.json')  // Adjust the path if needed
 
         // select the 10 closest stops
         const closestStops = stopsWithDistance.slice(0, 10);
+        localStorage.setItem("closestStops", JSON.stringify(closestStops));
 
         populateDropdown(closestStops);
     })
@@ -132,14 +132,14 @@ fetch('/static/stops.json')  // Adjust the path if needed
 
     function haversine(lat1, lon1, lat2, lon2) {
         const toRad = angle => angle * Math.PI / 180;
-        const R = 6371; // Earth's radius in km
+        const R = 6371; // earth's radius in km
         const dLat = toRad(lat2 - lat1);
         const dLon = toRad(lon2 - lon1);
         const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
                   Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
                   Math.sin(dLon / 2) * Math.sin(dLon / 2);
         const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-        return (R * c) * 0.621371; // Distance in km
+        return (R * c) * 0.621371; // in miles
 }
 
 
