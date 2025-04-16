@@ -30,6 +30,9 @@ def get_models():
 @app.route('/clock')
 def clock():
     return render_template('clock.html')
+@app.route("/stops")
+def get_stops():
+    return render_template("stops.html")
 
 @app.route('/arrivals', methods=['GET'])
 def get_bus_coords():
