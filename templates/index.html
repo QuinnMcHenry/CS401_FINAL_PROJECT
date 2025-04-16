@@ -43,14 +43,22 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
   <h1 class="mb-4 display-4">THE BUS Website</h1>
   <p class="fs-4">CS 401 Final Project</p>
   <button id="getLocationBtn" class="btn btn-dark btn-lg mt-3" onclick="getUserLocation()">Find My Bus</button>
-  
-<!-- Digital Clock Embed -->
-<div class="mt-4">
-  <iframe src="clock.html" width="200" height="60" style="border:none;"></iframe>
-</div>
 
-
-
+  <!-- Digital Clock Embed -->
+  <div class="mt-4">
+    <script src="https://cdn.logwork.com/widget/digital.js"></script>
+    <a href="https://logwork.com/current-time-in-honolulu-united-states-hawaii" 
+       class="digital-clock" 
+       data-style="style2" 
+       data-size="393" 
+       data-timezone="Pacific/Honolulu" 
+       data-language="en" 
+       data-format="12" 
+       data-date="1" 
+       data-seconds="1">
+      Current Time (HST)
+    </a>
+  </div>
 </header>
 
 
