@@ -27,6 +27,10 @@ def get_address():
 def get_models():
     return render_template("models.html")
 
+@app.route('/clock')
+def clock():
+    return render_template('clock.html')
+
 @app.route('/arrivals', methods=['GET'])
 def get_bus_coords():
     API_KEY = "F02CFCAC-3067-45DB-835E-A102C773D6F2"
