@@ -19,11 +19,11 @@
 
 
 /* Container to hold both dropdown and map */
-.container {
+/* .container {
     display: flex;
     justify-content: space-between; /* space between the dropdown and the map */
-    align-items: center; /* center vertically if needed */
-    width: 100%;
+    /* align-items: center; /* center vertically if needed */
+    /* width: 100%;
 }
 
 
