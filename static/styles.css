@@ -85,3 +85,8 @@ header{
     font-size: 30px;
 
 }
+
+#map-Bus{
+    border-top: 5px solid black;
+    border-bottom: 0px;
+}
