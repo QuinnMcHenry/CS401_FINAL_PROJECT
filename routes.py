@@ -1,5 +1,7 @@
 from flask import Flask, request, jsonify, render_template
+import json
 import requests # type: ignore
+import math
 
 app = Flask(__name__)
 
@@ -22,6 +24,65 @@ def get_contact():
 @app.route("/address")
 def get_address():
     return render_template("address.html")
+
+
+# Haversine formula to calculate distance between two lat/lng points
+def haversine(lat1, lon1, lat2, lon2):
+    import math
+    R = 6371000  # meters
+    phi1 = math.radians(lat1)
+    phi2 = math.radians(lat2)
+    dphi = math.radians(lat2 - lat1)
+    dlambda = math.radians(lon2 - lon1)
+
+    a = math.sin(dphi / 2) ** 2 + math.cos(phi1) * math.cos(phi2) * math.sin(dlambda / 2) ** 2
+    c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
+
+    distance = R * c
+    return distance
+
+@app.route('/routes')
+def routes():
+    try:
+        user_lat = float(request.args.get('lat'))
+        user_lon = float(request.args.get('lng'))
+
+        # Load stops.json
+        with open('static/stops.json') as f:
+            stops_data = json.load(f)
+        print('Stops data loaded:', stops_data)
+
+
+        stops_with_distance = []
+        for stop in stops_data:
+            stop_lat = float(stop['lat'])
+            stop_lon = float(stop['lon'])
+            distance = haversine(user_lat, user_lon, stop_lat, stop_lon)
+
+            # Only add if within 750 meters (0.75 km)
+            if distance <= 0.75:
+                stops_with_distance.append({
+                    "routeName": f"Stop ID {stop.get('id', 'Unknown')}",
+                    "arrivalTime": "Unknown",
+                    "stopLat": stop_lat,
+                    "stopLng": stop_lon,
+                    "stopID": stop.get('id', 'N/A'),
+                    "distance": distance
+                })
+
+        # Sort by distance
+        stops_with_distance.sort(key=lambda x: x['distance'])
+
+        # Get the 10 closest
+        closest_stops = stops_with_distance[:10]
+
+        return jsonify(closest_stops)
+
+    except Exception as e:
+        print("Error inside /routes:", str(e))
+        return jsonify({'error': str(e)}), 500
+
+
 
 @app.route("/models")
 def get_models():
@@ -72,6 +133,9 @@ data = {
 
     except requests.exceptions.RequestException as e:
         return jsonify({'error': f'An error occurred: {str(e)}'}), 500
+    
+
+    
 
 # @app.route('/arrivals', methods=['GET'])
 # def get_user_coords():
