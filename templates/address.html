@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<title>Address Search</title>
+<title>TheBus: Address Search</title>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="https://www.w3schools.com/w3css/5/w3.css">
@@ -96,13 +96,12 @@
 
     <h2 class="address-info", style="background-color: white; padding-top: 40px; padding-bottom: 15px;" >Enter an address to find buses nearby.</h2>
     <div id="searchBar">
-      <form action="/address" method="GET">
+      <form id="addressForm">
         <input type="text" id="addressInput" placeholder="Enter address..." />
         <button type="submit">Search</button>
       </form>
     </div>
-    <div id="stopResults" class="results"></div>
-    <div id="arrivalResults" class="arrivals"></div>
+    <div id="results"></div>
 
     <div>
       <h3>Below this is where all the specific addresses will populate, going to give them a button for all that populate so it can pull up specific bus stops on the map based on the 
@@ -135,7 +134,7 @@
 
   async function getCoordinates() {
     const address = document.getElementById("searchBar").value;
-    const apiKey = "YOUR_GOOGLE_MAPS_API_KEY";
+    const apiKey = "AIzaSyAiN7CWd2xhXCz9u3ddAlZO_mKE3y-TfKk";
 
     try {
       const response = await fetch(`https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=${apiKey}`);
@@ -158,7 +157,52 @@
       document.getElementById("output").innerText = "Something went wrong!";
     }
   }
+  const GOOGLE_MAPS_API_KEY = "AIzaSyAiN7CWd2xhXCz9u3ddAlZO_mKE3y-TfKk"; 
 
+document.getElementById('addressForm').addEventListener('submit', async function(e) {
+  e.preventDefault();
+
+  const address = document.getElementById('addressInput').value;
+
+  try {
+    // 1. Fetch lat/lng from Google Maps Geocoding API
+    const geoResponse = await fetch(`https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=${GOOGLE_MAPS_API_KEY}`);
+    const geoData = await geoResponse.json();
+
+    if (geoData.status !== "OK" || geoData.results.length === 0) {
+      throw new Error('No location found.');
+    }
+
+    const location = geoData.results[0].geometry.location; // { lat: ..., lng: ... }
+    console.log('Coordinates:', location.lat, location.lng);
+
+    // 2. Now you have lat and lng — you can call your own API with them
+    const busResponse = await fetch(`/your-bus-api-endpoint?lat=${location.lat}&lng=${location.lng}`);
+    const busData = await busResponse.json();
+
+    // 3. Display results
+    const resultsDiv = document.getElementById('results');
+    resultsDiv.innerHTML = '';
+
+    if (busData.length === 0) {
+      resultsDiv.innerHTML = '<p>No bus routes found near this address.</p>';
+      return;
+    }
+
+    busData.forEach(route => {
+      const routeElement = document.createElement('div');
+      routeElement.innerHTML = `
+        <h3>${route.routeName}</h3>
+        <p>Arrival Time: ${route.arrivalTime}</p>
+      `;
+      resultsDiv.appendChild(routeElement);
+    });
+
+  } catch (error) {
+    console.error('Error:', error);
+    document.getElementById('results').innerHTML = '<p>Something went wrong.</p>';
+  }
+});
   </script>
   
   <footer>
