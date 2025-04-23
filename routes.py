@@ -44,13 +44,14 @@ def haversine(lat1, lon1, lat2, lon2):
 @app.route('/routes')
 def routes():
     try:
-        user_lat = float(request.args.get('lat'))
-        user_lon = float(request.args.get('lng'))
 
         # Load stops.json
         with open('static/stops.json') as f:
             stops_data = json.load(f)
-        print('Stops data loaded:', stops_data)
+
+
+        user_lat = float(request.args.get('lat'))
+        user_lon = float(request.args.get('lng'))
 
 
         stops_with_distance = []
@@ -60,7 +61,7 @@ def routes():
             distance = haversine(user_lat, user_lon, stop_lat, stop_lon)
 
             # Only add if within 750 meters (0.75 km)
-            if distance <= 0.75:
+            if distance <= 750:
                 stops_with_distance.append({
                     "routeName": f"Stop ID {stop.get('id', 'Unknown')}",
                     "arrivalTime": "Unknown",

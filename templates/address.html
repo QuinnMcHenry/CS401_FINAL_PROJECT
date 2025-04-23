@@ -100,20 +100,26 @@
       Enter an address to find buses nearby.
     </h2>
     
-    <div id="searchBar">
+    <div id="searchBar" style="padding: 35px;">
       <form id="addressForm">
         <input type="text" id="addressInput" placeholder="Enter address..." />
-        <button type="submit">Search</button>
+        <button id="searchButton" type="submit">Search</button>
       </form>
     </div>
     
     <div id="results"></div>
     
-    <div>
-      <h3>Below this is where all the specific addresses will populate. I'll give them buttons so it can pull up specific bus stops on the map based on the inputted address.</h3>
+    <div id="routesContainer" style="display: flex; flex-wrap: wrap; gap: 16px; justify-content: center; align-items: stretch; max-width: 1200px; margin: 0 auto; padding: 20px;"></div>
+
+
+    
+    <div id="maps">
+      <div  id="mapped" class="map-container">
+
+      </div>
     </div>
     
-    <div id="map" style="height: 800px;"></div>
+
     
     <!-- Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -122,7 +128,7 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     
     <script>
-      const map = L.map('map').setView([21.442843, -157.963486], 11);
+      const map = L.map('maps').setView([21.442843, -157.963486], 11);
       let marker = null;
       let stopMarkers = [];
       let markers = {};  // for buses
@@ -139,30 +145,14 @@
         attribution: '&copy; OpenStreetMap contributors'
       }).addTo(map);
 
-      // Update buses moving on map
-      function updateMap() {
-        $.getJSON('/arrivals', function(data) {
-          data.arrivals.forEach(arrival => {
-            let lat = parseFloat(arrival.latitude);
-            let lon = parseFloat(arrival.longitude);
-            let vehicle = arrival.vehicle;
-
-            if (!markers[vehicle]) {
-              let marker = L.marker([lat, lon], {icon: busIcon}).addTo(map)
-                .bindPopup(`Vehicle: ${vehicle}`);
-              markers[vehicle] = marker;
-            } else {
-              markers[vehicle].setLatLng([lat, lon]);
-            }
-          });
-        });
-      }
 
       // Search address
+      let busStopsNearby = [];
       document.getElementById('addressForm').addEventListener('submit', async function(e) {
         e.preventDefault();
 
         const address = document.getElementById('addressInput').value.trim();
+        console.log(address)
         if (!address) {
           alert('Please enter an address.');
           return;
@@ -172,13 +162,14 @@
           // 1. Geocode the address
           const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}`);
           const data = await response.json();
+
           if (data.length === 0) {
             throw new Error('No location found.');
           }
 
           const lat = parseFloat(data[0].lat);
           const lon = parseFloat(data[0].lon);
-          console.log('Coordinates:', lat, lon);
+          //console.log('Coordinates:', lat, lon);
 
           // 2. Move map and marker
           map.setView([lat, lon], 14);
@@ -192,6 +183,7 @@
           // 3. Fetch nearby bus stops
           const busResponse = await fetch(`/routes?lat=${lat}&lng=${lon}`);
           const busData = await busResponse.json();
+          console.log(busData) //check to make sure stops received 
 
           const resultsDiv = document.getElementById('results');
           resultsDiv.innerHTML = '';  // clear previous results
@@ -200,22 +192,67 @@
             resultsDiv.innerHTML = '<p>No bus routes found near this address.</p>';
             return;
           }
-
-          busData.forEach(route => {
-            const routeElement = document.createElement('div');
-            routeElement.innerHTML = `
-              <h3>${route.routeName}</h3>
-              <p>Arrival Time: ${route.arrivalTime}</p>
-              <button onclick="focusOnBusStop(${route.stopLat}, ${route.stopLng})">Show Stop</button>
-            `;
-            resultsDiv.appendChild(routeElement);
-          });
-
-        } catch (error) {
-          console.error('Error:', error);
-          document.getElementById('results').innerHTML = '<p>Something went wrong.</p>';
+          else{
+            busStopsNearby.push(busData)
+          }
+      }
+        catch {
+          console.error("Something went wrong");
         }
-      });
+      
+
+        const container = document.getElementById('routesContainer');
+
+        let lastSearchAddress = '';
+
+    document.getElementById('searchButton').addEventListener('click', function () {
+        const currentAddress = document.getElementById('addressInput').value.trim();  // trim to rid spaces
+        console.log(currentAddress)
+
+        // If the address is changed, clear the previous results
+        if (currentAddress !== lastSearchAddress) {
+            container.innerHTML = '';  // Clear previous results if it's a new address
+        } else {
+            console.log('Same address. Repopulating existing results...');
+            container.innerHTML = '';  // Still clear results even if same address
+        }
+
+        // Perform the search and populate buttons
+        performSearch(currentAddress);
+
+        // Update the last search address
+        lastSearchAddress = currentAddress;
+    });
+  });
+
+    function performSearch(address) {
+        console.log(`Performing search for: ${address}`);
+
+        busStopsNearby.forEach(route => {
+            const routeElement = document.createElement('div');
+            routeElement.style.border = '1px solid #ccc';
+            routeElement.style.padding = '16px';
+            routeElement.style.borderRadius = '8px';
+            routeElement.style.width = '200px';
+            routeElement.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.1)';
+
+            routeElement.innerHTML = `
+                <h3 style="margin-bottom: 8px;">${route.routeName}</h3>
+                <p style="margin-bottom: 12px;">Arrival Time: ${route.arrivalTime}</p>
+                <button 
+                    style="padding: 10px 20px; width: 100%;" 
+                    onclick="focusOnBusStop(${route.stopLat}, ${route.stopLng})"
+                >
+                    Show Stop
+                </button>
+            `;
+
+            container.appendChild(routeElement);
+    });
+  }
+
+
+        
 
       // Focus on bus stop
       function focusOnBusStop(lat, lng) {
@@ -226,6 +263,9 @@
         stopMarkers.push(stopMarker);
 
         map.setView([lat, lng], 17);
+
+        const mapElement = document.getElementById('maps');
+        mapElement.scrollIntoView({ behavior: 'smooth' });
       }
 
 
