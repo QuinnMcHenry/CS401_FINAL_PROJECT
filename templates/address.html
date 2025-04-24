@@ -120,8 +120,13 @@
 
     <div class="dropdownAddress">
       <select id="savedDropdown">
-        <option disabled selected>Select a saved address</option>
       </select>
+    </div>
+
+    <div class="delete-address-btn-container">
+      <button id="deleteAddressBtn" style="display: none;">Delete Address</button>
+      <button id="clearAllBtn">Clear All Saved Addresses</button>
+
     </div>
 
     <!-- Footer -->
@@ -210,7 +215,7 @@
           //console.log('Coordinates:', lat, lon);
 
           // Move the map and marker
-          map.setView([lat, lon], 14);
+          map.setView([lat, lon], 17);
 
           if (marker) {
             marker.setLatLng([lat, lon]);
@@ -251,6 +256,7 @@
         lastSearchAddress = currentAddress;
       });
 
+
       // Function for creating nearby bus stops
     function performSearch(address) {
       console.log(busStopsNearby)
@@ -286,87 +292,125 @@
 
       //Save Address
       function saveAddress(lat, lng) {
-        const userAddress = `${lat},${lng}`;
-
-        // Save in local storage (in an array)
         let saved = JSON.parse(localStorage.getItem('savedAddresses')) || [];
 
-        // Avoiding duplicates
-        if (!saved.includes(userAddress)) {
-          saved.push(userAddress);
+        // Check for duplicates using .some and matching both lat/lng
+        const exists = saved.some(addr => addr.lat === lat && addr.lng === lng);
+
+        if (!exists) {
+          saved.push({ lat, lng });
           localStorage.setItem('savedAddresses', JSON.stringify(saved));
         }
-
         // Send to routes.py
         fetch('/save-userAddress', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ userAddress })
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ lat, lng }) // send object, not string
         }).then(res => res.json())
           .then(data => console.log('Saved to backend:', data))
           .catch(err => console.error('POST failed:', err));
 
         // Update dropdown immediately
         updateSavedDropdown();
-}
-      function deleteAddress(lat, lng){
-        const userAddress = `${lat},${lng}`;
-
+    }
+        function deleteAddress(lat, lng) {
         let saved = JSON.parse(localStorage.getItem('savedAddresses')) || [];
 
-        if (saved.includes(userAddress)) {
-          saved.pop(userAddress);
-          localStorage.removeItem('savedAddresses', JSON.stringify(saved));
-        }
-         //send to routes.py
+        saved = saved.filter(addr => addr.lat !== lat || addr.lng !== lng);
+        localStorage.setItem('savedAddresses', JSON.stringify(saved));
+
+
         fetch('/delete-userAddress', {
           method: 'DELETE',
-          headers: {'Content-Type': 'application/json'},
-          body: JSON.stringify({userAddress}),
-        }).then(res => res.json())
-          .then(data => console.log('Saved to backend:', data))
-          .catch(err => console.error('POST failed:', err));
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ lat, lng }),
+        })
+          .then(res => res.json())
+          .then(data => console.log('Deleted from backend:', data))
+          .catch(err => console.error('DELETE failed:', err));
 
         updateSavedDropdown();
       }
+
+
+      document.getElementById('clearAllBtn').addEventListener('click', () => {
+        if (confirm('Are you sure you want to delete all saved addresses?')) {
+          localStorage.removeItem('savedAddresses');
+          updateSavedDropdown();
+          document.getElementById('deleteAddressBtn').style.display = 'none';
+        }
+      });
 
 
 
       // This section updates the dropdown menu //
       async function updateSavedDropdown() {
         const dropdown = document.getElementById('savedDropdown');
-        dropdown.innerHTML = ''; // Clear old options
+        dropdown.innerHTML = '';
+
+        const defaultOption = document.createElement('option');
+        defaultOption.text = 'Select a saved address';
+        defaultOption.selected = true; // <- sets it as the default selection
+        dropdown.appendChild(defaultOption);
 
         const saved = JSON.parse(localStorage.getItem('savedAddresses')) || [];
+        const deduped = saved.filter(
+          (item, index, self) =>
+            index === self.findIndex(t => t.lat === item.lat && t.lng === item.lng)
+        );
 
-        if (saved.length === 0) {
+
+        if (deduped.length === 0) {
           const option = document.createElement('option');
           option.text = 'No saved addresses';
           option.disabled = true;
           dropdown.appendChild(option);
         } else {
-          for (const pair of saved) {
-            const [lat, lng] = pair.split(',').map(x => x.trim());
-            console.log(`Lat: ${lat}, Lng: ${lng}`);
-
-            // Reverse geocode here to display human-readable addresses
-            const address = await reverseGeocode(lat, lng);
-            
-            // const humanAddress = await reverseGeocode(lat, lng);
-
+          for (const location of deduped) {
+            const { lat, lng } = location;  // pulls directly from location object
             const option = document.createElement('option');
-            option.textContent = address; 
-            option.value = pair;
+            const address = await reverseGeocode(lat, lng);
+            option.textContent = address;
+            option.value = JSON.stringify({ lat, lng });  // store object as string in value
             dropdown.appendChild(option);
           }
-          }
+        }
       }
 
+      document.addEventListener('DOMContentLoaded', () => {
+        updateSavedDropdown();
+      });
+
+  
+    document.getElementById('savedDropdown').addEventListener('change', () => {
+      const selectedValue = document.getElementById('savedDropdown').value;
+      const deleteBtn = document.getElementById('deleteAddressBtn');
+
+      deleteBtn.style.display = selectedValue ? 'inline-block' : 'none';
+    });
+
+    // Deleting address using the delete button/function
+    document.getElementById('deleteAddressBtn').addEventListener('click', () => {
+      const dropdown = document.getElementById('savedDropdown');
+      const selected = dropdown.value;
+
+      if (!selected) return;
+
+      const { lat, lng } = JSON.parse(selected); // extract from stored JSON
+
+      deleteAddress(lat, lng); // call the server + local delete
+      document.getElementById('deleteAddressBtn').style.display = 'none';
+    });
+
+
+
+      // Transform a lat-lng into human readable address
       async function reverseGeocode(lat, lng) {
         const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`);
         const data = await response.json();
-        return data.display_name; // this is the human-readable address
+        return data.display_name || `${lat}, ${lng}`;
       }
+
 
 
     // On webpage refresh tells browser not to update dropdown until all necessary dependencies have been rendered
@@ -375,16 +419,18 @@
       });
 
       // Updates dropdown when address changed 
-      document.getElementById('savedDropdown').addEventListener('change', function () {
-      const [lat, lng] = this.value.split(',').map(Number);
-      map.setView([lat, lng], 17);
-      stopMarkers.forEach(m => map.removeLayer(m));
-      stopMarkers = [];
-      const marker = L.marker([lat, lng], {icon: busIcon}).addTo(map);
-        stopMarkers.push(marker);
+      document.getElementById('savedDropdown').addEventListener('change', (e) => {
+        const selected = JSON.parse(e.target.value);  // safely parse the lat/lng
+        const { lat, lng } = selected;
 
-        map.setView([lat, lng], 17);
-    });
+        if (!lat || !lng || isNaN(lat) || isNaN(lng)) {
+          console.error('Invalid coordinates:', selected);
+          return;
+        }
+
+        map.setView([lat, lng], 14);  // or however you want to adjust the zoom
+      });
+
       
       // Focuses in on searched bus stop
       function focusOnBusStop(lat, lng) {
