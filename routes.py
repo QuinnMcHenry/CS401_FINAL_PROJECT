@@ -25,6 +25,17 @@ def get_contact():
 def get_address():
     return render_template("address.html")
 
+@app.route("/save-userAddress", methods=['POST'])
+def save_address(lat, lng):
+    data = request.get_json()
+    user_address = data.get('lat')
+
+    # You can now use `username`, e.g., save to DB
+    print(f"Username received: {user_address}")
+
+    return jsonify({'status': 'success', 'username': user_address}), 200
+
+
 
 # Haversine formula to calculate distance between two lat/lng points
 def haversine(lat1, lon1, lat2, lon2):

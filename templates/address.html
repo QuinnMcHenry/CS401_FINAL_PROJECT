@@ -147,7 +147,11 @@
 
 
       // Search address
+      const container = document.getElementById('routesContainer');
+      let lastSearchAddress = '';
+      const busStopsNearby = [];
       const busData = []
+
       document.getElementById('addressForm').addEventListener('submit', async function(e) {
         e.preventDefault();
 
@@ -157,6 +161,20 @@
           alert('Please enter an address.');
           return;
         }
+
+        const currentAddress = document.getElementById('addressInput').value.trim();  // trim to rid spaces
+        //console.log(currentAddress)
+
+        // If the address is changed, clear the previous results
+        if (currentAddress != lastSearchAddress) {
+            container.innerHTML = '';  // Clear previous results if it's a new address
+            
+        } else {
+            console.log('Same address. Repopulating existing results...');
+            container.innerHTML = '';  // Still clear results even if same address
+          }
+
+
 
         try {
           // 1. Geocode the address
@@ -189,7 +207,6 @@
           const resultsDiv = document.getElementById('results');
           resultsDiv.innerHTML = '';  // clear previous results
 
-          const busStopsNearby = [];
 
           if (busData.length === 0) {
             resultsDiv.innerHTML = '<p>No bus routes found near this address.</p>';
@@ -197,47 +214,30 @@
           }
           else{
             //console.log(busData)
+            busStopsNearby.length = 0; // Clear old results before repopulating
             busData.forEach(busRoutes =>{
               busStopsNearby.push(busRoutes)
-              return busStopsNearby
             });
-            console.log(busStopsNearby)
+            //console.log(busStopsNearby)
           }
       }
+    
         catch {
           console.error("Something went wrong");
         }
-      });
-
-        const container = document.getElementById('routesContainer');
-        
-        let lastSearchAddress = '';
-
-    document.getElementById('searchButton').addEventListener('click', function () {
-        const currentAddress = document.getElementById('addressInput').value.trim();  // trim to rid spaces
-        //console.log(currentAddress)
-
-        // If the address is changed, clear the previous results
-        if (currentAddress != lastSearchAddress) {
-            container.innerHTML = '';  // Clear previous results if it's a new address
-        } else {
-            console.log('Same address. Repopulating existing results...');
-            container.innerHTML = '';  // Still clear results even if same address
-        }
-
         // Perform the search and populate buttons
         performSearch(currentAddress);
 
         // Update the last search address
         lastSearchAddress = currentAddress;
-    });
+      });
 
 
     function performSearch(address) {
       console.log(busStopsNearby)
         console.log(`Performing search for: ${address}`);
 
-        busStopsNearby.forEach(route => {
+        busStopsNearby.forEach(route => { 
             const routeElement = document.createElement('div');
             routeElement.style.border = '1px solid #ccc';
             routeElement.style.padding = '16px';
@@ -249,26 +249,53 @@
                 <h3 style="margin-bottom: 8px;">${route.routeName}</h3>
                 <p style="margin-bottom: 12px;">Arrival Time: ${route.arrivalTime}</p>
                 <button 
-                    style="padding: 10px 20px; width: 100%;" 
+                    style="padding: 5px 10px; width: 100%;" 
                     onclick="focusOnBusStop(${route.stopLat}, ${route.stopLng})"
                 >
                     Show Stop
+                </button>
+                <button id="save-address-btn;" style="padding: 5px 10px; width: 100%;"
+                onclick="saveAddress(${route.stopLat}, ${route.stopLng})">
+                Save Address
                 </button>
             `;
 
             container.appendChild(routeElement);
     });
   }
+  
+      //Save Address
+        function saveAddress(lat, lng){
+
+        localStorage.setItem(lat, lng);
+        const userAddress = localStorage.getItem('lat');
+
+        fetch('/save-userAddress', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ userAddress })
+        })
+        .then(res => res.json())
+        .then(data => console.log(data));
 
 
-        
+      }
+      const savedAddresses = []
+      Document.getElementById('save-address-btn').addEventListener('click', async function(e) {
+        e.preventDefault();
+
+        // savedAddresses.push(
+
+      })
 
       // Focus on bus stop
       function focusOnBusStop(lat, lng) {
         stopMarkers.forEach(m => map.removeLayer(m));
         stopMarkers = [];
 
-        const stopMarker = L.marker([lat, lng], {icon: busIcon}).addTo(maps);
+        const stopMarker = L.marker([lat, lng], {icon: busIcon}).addTo(map);
         stopMarkers.push(stopMarker);
 
         map.setView([lat, lng], 17);
@@ -276,9 +303,7 @@
         const mapElement = document.getElementById('maps');
         mapElement.scrollIntoView({ behavior: 'smooth' });
       }
-
-
-          
+     
       async function getGeoResponse(){
       const geoResponse = await fetch(`https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=${GOOGLE_MAPS_API_KEY}`);
       const geoData = await geoResponse.json();
