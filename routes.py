@@ -26,14 +26,22 @@ def get_address():
     return render_template("address.html")
 
 @app.route("/save-userAddress", methods=['POST'])
-def save_address(lat, lng):
+def save_address():
     data = request.get_json()
-    user_address = data.get('lat')
+    # print(data)
+    user_address = data.get('userAddress')
 
-    # You can now use `username`, e.g., save to DB
-    print(f"Username received: {user_address}")
+
+    print(f"User address received: {user_address}")
 
     return jsonify({'status': 'success', 'username': user_address}), 200
+
+# @app.route("/delete-userAddress")
+# def delete_address():
+#     data = request.get_json()
+    
+
+
 
 
 

@@ -110,15 +110,34 @@
     <div id="results"></div>
     
     <div id="routesContainer" style="display: flex; flex-wrap: wrap; gap: 16px; justify-content: center; align-items: stretch; max-width: 1200px; margin: 0 auto; padding: 20px;"></div>
-
-
     
+
     <div id="maps">
       <div  id="mapped" class="map-container">
 
       </div>
     </div>
-    
+
+    <div class="dropdownAddress">
+      <select id="savedDropdown">
+        <option disabled selected>Select a saved address</option>
+      </select>
+    </div>
+
+    <!-- Footer -->
+  <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
+    <p class="col-md-4 mb-0 text-body-secondary">© TheBus</p>
+
+    <a href="http://127.0.0.1:5000/" class="col-md-4 d-flex align-items-center justify-content-center mb-3 mb-md-0 me-md-auto link-body-emphasis text-decoration-none">
+      <img src="static/thebus.png" alt="TheBus Logo" style="height: 40px;">
+    </a>
+
+    <ul class="nav col-md-4 justify-content-end">
+      <li class="nav-item"><a href="http://127.0.0.1:5000/models" class="nav-link px-2 text-body-secondary">Features</a></li>
+      <li class="nav-item"><a href="http://127.0.0.1:5000/about" class="nav-link px-2 text-body-secondary">About</a></li>
+      <li class="nav-item"><a href="http://127.0.0.1:5000/contact" class="nav-link px-2 text-body-secondary">Contact Us</a></li>
+    </ul>
+  </footer>
 
     
     <!-- Leaflet CSS -->
@@ -177,7 +196,7 @@
 
 
         try {
-          // 1. Geocode the address
+          // Geocode the address
           const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}`);
           const data = await response.json();
           //console.log(data)
@@ -190,7 +209,7 @@
           const lon = parseFloat(data[0].lon);
           //console.log('Coordinates:', lat, lon);
 
-          // 2. Move map and marker
+          // Move the map and marker
           map.setView([lat, lon], 14);
 
           if (marker) {
@@ -199,7 +218,7 @@
             marker = L.marker([lat, lon]).addTo(map);
           }
 
-          // 3. Fetch nearby bus stops
+          // Get nearby bus stops
           const busResponse = await fetch(`/routes?lat=${lat}&lng=${lon}`);
           const busData = await busResponse.json();
           //console.log(busData) //check to make sure stops received 
@@ -232,7 +251,7 @@
         lastSearchAddress = currentAddress;
       });
 
-
+      // Function for creating nearby bus stops
     function performSearch(address) {
       console.log(busStopsNearby)
         console.log(`Performing search for: ${address}`);
@@ -263,34 +282,111 @@
             container.appendChild(routeElement);
     });
   }
-  
+
+
       //Save Address
-        function saveAddress(lat, lng){
+      function saveAddress(lat, lng) {
+        const userAddress = `${lat},${lng}`;
 
-        localStorage.setItem(lat, lng);
-        const userAddress = localStorage.getItem('lat');
+        // Save in local storage (in an array)
+        let saved = JSON.parse(localStorage.getItem('savedAddresses')) || [];
 
+        // Avoiding duplicates
+        if (!saved.includes(userAddress)) {
+          saved.push(userAddress);
+          localStorage.setItem('savedAddresses', JSON.stringify(saved));
+        }
+
+        // Send to routes.py
         fetch('/save-userAddress', {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ userAddress })
-        })
-        .then(res => res.json())
-        .then(data => console.log(data));
+        }).then(res => res.json())
+          .then(data => console.log('Saved to backend:', data))
+          .catch(err => console.error('POST failed:', err));
 
+        // Update dropdown immediately
+        updateSavedDropdown();
+}
+      function deleteAddress(lat, lng){
+        const userAddress = `${lat},${lng}`;
 
+        let saved = JSON.parse(localStorage.getItem('savedAddresses')) || [];
+
+        if (saved.includes(userAddress)) {
+          saved.pop(userAddress);
+          localStorage.removeItem('savedAddresses', JSON.stringify(saved));
+        }
+         //send to routes.py
+        fetch('/delete-userAddress', {
+          method: 'DELETE',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({userAddress}),
+        }).then(res => res.json())
+          .then(data => console.log('Saved to backend:', data))
+          .catch(err => console.error('POST failed:', err));
+
+        updateSavedDropdown();
       }
-      const savedAddresses = []
-      Document.getElementById('save-address-btn').addEventListener('click', async function(e) {
-        e.preventDefault();
 
-        // savedAddresses.push(
 
-      })
 
-      // Focus on bus stop
+      // This section updates the dropdown menu //
+      async function updateSavedDropdown() {
+        const dropdown = document.getElementById('savedDropdown');
+        dropdown.innerHTML = ''; // Clear old options
+
+        const saved = JSON.parse(localStorage.getItem('savedAddresses')) || [];
+
+        if (saved.length === 0) {
+          const option = document.createElement('option');
+          option.text = 'No saved addresses';
+          option.disabled = true;
+          dropdown.appendChild(option);
+        } else {
+          for (const pair of saved) {
+            const [lat, lng] = pair.split(',').map(x => x.trim());
+            console.log(`Lat: ${lat}, Lng: ${lng}`);
+
+            // Reverse geocode here to display human-readable addresses
+            const address = await reverseGeocode(lat, lng);
+            
+            // const humanAddress = await reverseGeocode(lat, lng);
+
+            const option = document.createElement('option');
+            option.textContent = address; 
+            option.value = pair;
+            dropdown.appendChild(option);
+          }
+          }
+      }
+
+      async function reverseGeocode(lat, lng) {
+        const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`);
+        const data = await response.json();
+        return data.display_name; // this is the human-readable address
+      }
+
+
+    // On webpage refresh tells browser not to update dropdown until all necessary dependencies have been rendered
+      document.addEventListener('DOMContentLoaded', () => {
+        updateSavedDropdown();
+      });
+
+      // Updates dropdown when address changed 
+      document.getElementById('savedDropdown').addEventListener('change', function () {
+      const [lat, lng] = this.value.split(',').map(Number);
+      map.setView([lat, lng], 17);
+      stopMarkers.forEach(m => map.removeLayer(m));
+      stopMarkers = [];
+      const marker = L.marker([lat, lng], {icon: busIcon}).addTo(map);
+        stopMarkers.push(marker);
+
+        map.setView([lat, lng], 17);
+    });
+      
+      // Focuses in on searched bus stop
       function focusOnBusStop(lat, lng) {
         stopMarkers.forEach(m => map.removeLayer(m));
         stopMarkers = [];
@@ -303,7 +399,23 @@
         const mapElement = document.getElementById('maps');
         mapElement.scrollIntoView({ behavior: 'smooth' });
       }
-     
+
+      async function displaySavedAddresses() {
+        const saved = JSON.parse(localStorage.getItem('savedAddresses') || '[]');
+
+        for (const pair of saved) {
+          const [lat, lng] = pair.split(',');
+          const address = await reverseGeocode(lat, lng);
+          
+          // For example, add it to a dropdown:
+          const option = document.createElement('option');
+          option.value = pair;
+          option.textContent = address;
+          document.getElementById('addressDropdown').appendChild(option);
+        }
+      }
+
+     // Debugging check to verify geo-coded response success
       async function getGeoResponse(){
       const geoResponse = await fetch(`https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=${GOOGLE_MAPS_API_KEY}`);
       const geoData = await geoResponse.json();
