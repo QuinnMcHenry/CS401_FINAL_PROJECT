@@ -25,7 +25,7 @@ Once Docker is up and running, locate your Terminal and enter the commands below
 
 Example
 ```bash
-
+docker build -t llasell/the-bus_website:1.0 -f Dockerfile .
 ```
 Template
 ```bash
@@ -37,26 +37,23 @@ docker build -t <dockerhubusername>/<code>:<version> <dockerfile> .
 
 Example
 ```bash
-
+docker run --rm -v -p 5000:5000 llasell/the-bus_website:1.0
 ```
 Template
 ```bash
-docker run --rm -v <directory>:<location> -p <port> <dockerhubusername>/<code>:<version> <pythonversion> <script>
+docker run --rm  -p <port> <dockerhubusername>/<code>:<version> 
 ```
 
 Resulting Output Example (PUT NEW HERE!!)
 ```bash
- * Serving Flask app 'app'
+* Serving Flask app 'routes'
  * Debug mode: on
-INFO:werkzeug:WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
- * Running on all addresses (0.0.0.0)
+WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
  * Running on http://127.0.0.1:5000
- * Running on http://172.17.0.2:5000
-INFO:werkzeug:Press CTRL+C to quit
-INFO:werkzeug: * Restarting with stat
-WARNING:werkzeug: * Debugger is active!
-INFO:werkzeug: * Debugger PIN: 721-006-464
-```
+Press CTRL+C to quit
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 828-644-499
 
 #
 
