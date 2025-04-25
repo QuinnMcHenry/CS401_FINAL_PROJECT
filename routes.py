@@ -25,6 +25,40 @@ def get_contact():
 def get_address():
     return render_template("address.html")
 
+@app.route("/save-userAddress", methods=['POST'])
+def save_address():
+    data = request.get_json()
+    lat = data.get('lat')
+    lng = data.get('lng')
+
+    if lat is None or lng is None:
+        return jsonify({'error': 'Missing lat/lng'}), 400
+
+    print(f"User address received: lat={lat}, lng={lng}")
+    # Save to database or in-memory list as object { lat: x, lng: y }
+
+    return jsonify({'status': 'success', 'userAddress': {'lat': lat, 'lng': lng}}), 200
+
+
+@app.route('/delete-userAddress', methods=['DELETE'])
+def delete_address():
+    data = request.get_json()
+    lat = data.get('lat')
+    lng = data.get('lng')
+
+    if lat is None or lng is None:
+        return jsonify({'error': 'Missing lat/lng'}), 400
+
+    # perform deletion logic here...
+
+    return jsonify({'status': 'deleted', 'lat': lat, 'lng': lng}), 200
+
+
+    
+
+
+
+
 
 # Haversine formula to calculate distance between two lat/lng points
 def haversine(lat1, lon1, lat2, lon2):
@@ -41,7 +75,7 @@ def haversine(lat1, lon1, lat2, lon2):
     distance = R * c
     return distance
 
-@app.route('/routes')
+@app.route('/routes', methods = ["GET"])
 def routes():
     try:
 
