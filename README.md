@@ -1,19 +1,17 @@
 # Running TheBus Webiste! 🚌
+Quinn McHenry, Logan Lasell, Ashley Holen
 
-Below are the instructions needed to run our website created as our final project in CS 401: Software Engineering and Design.
+For our CS 401 Software Engineering and Design Spring 2025 final project, our group decided to create a web based software application which assists the general public in navigating public transportation systems, specifically TheBus on O’ahu. Our website provides a user-friendly and accessible resource for users to quickly and easily find the bus which is that of their best interest. We have three features of the website - locating the buses nearest to you, finding the buses based on address, and finding the nearest bus stops.
+
+Below are the instructions needed to run our website created as our website!
 
 In this assignment, we used Docker to containerize 2 python files, routes.py and test_routes.py. 
 When app.py runs, a Flask app starts, allowing for the user to use the API from their local device by URL. 
 The test_app.py is used to ensure the accuracy of app.py using pytest. Below are instuctions how to run this webiste on your local device.  
 
 ## Before You Begin! 📩
-To begin, you are provided with these files in this GitHub Repostitory. Download them onto your local device. 
+To begin, you are provided with these files in this GitHub Repostitory. Download them all onto your local device - this includes the Dockerfile, two python files, 2 txt files, 7 html files, and the static folder containing the images on our webiste.
 
-#### Dockerfile
-#### routes.py
-#### test_routes.py
-#### requirements.txt
-#### (put name of htmls here and raw data)
 
 ![Unknown](https://github.com/user-attachments/assets/fdb25b2b-b803-44d8-bb16-e47aefb3ed5d)
 
@@ -33,7 +31,7 @@ docker build -t <dockerhubusername>/<code>:<version> <dockerfile> .
 ```
 #
 
-## Running the website port 5000
+## Running the website on port 5000
 
 Example
 ```bash
@@ -44,7 +42,7 @@ Template
 docker run --rm -v <directory>:<location> -p <port> <dockerhubusername>/<code>:<version> <pythonversion> <script>
 ```
 
-Resulting Output Example (PUT NEW HERE)
+Resulting Output Example (PUT NEW HERE!!)
 ```bash
  * Serving Flask app 'app'
  * Debug mode: on
@@ -60,4 +58,4 @@ INFO:werkzeug: * Debugger PIN: 721-006-464
 
 #
 
-You are all set!
+You are all set, enjoy your ride! 
