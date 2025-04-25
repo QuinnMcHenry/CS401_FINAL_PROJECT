@@ -44,7 +44,7 @@ Template
 docker run --rm  -p <port> <dockerhubusername>/<code>:<version> 
 ```
 
-Resulting Output Example (PUT NEW HERE!!)
+Resulting Output Example
 ```bash
 * Serving Flask app 'routes'
  * Debug mode: on
@@ -54,7 +54,7 @@ Press CTRL+C to quit
  * Restarting with stat
  * Debugger is active!
  * Debugger PIN: 828-644-499
-
+```
 #
 
 You are all set, enjoy your ride! 
