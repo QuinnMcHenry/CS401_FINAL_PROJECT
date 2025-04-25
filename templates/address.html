@@ -212,7 +212,6 @@
 
           const lat = parseFloat(data[0].lat);
           const lon = parseFloat(data[0].lon);
-          //console.log('Coordinates:', lat, lon);
 
           // Move the map and marker
           map.setView([lat, lon], 17);
@@ -272,7 +271,7 @@
 
             routeElement.innerHTML = `
                 <h3 style="margin-bottom: 8px;">${route.routeName}</h3>
-                <p style="margin-bottom: 12px;">Arrival Time: ${route.arrivalTime}</p>
+                <p style="margin-bottom: 12px;">Arrival Time: ${'...'}</p>
                 <button 
                     style="padding: 5px 10px; width: 100%;" 
                     onclick="focusOnBusStop(${route.stopLat}, ${route.stopLng})"
@@ -290,7 +289,7 @@
   }
 
 
-      //Save Address
+      // Save Address
       function saveAddress(lat, lng) {
         let saved = JSON.parse(localStorage.getItem('savedAddresses')) || [];
 
@@ -350,7 +349,7 @@
 
         const defaultOption = document.createElement('option');
         defaultOption.text = 'Select a saved address';
-        defaultOption.selected = true; // <- sets it as the default selection
+        defaultOption.selected = true; // sets it as the default selection
         dropdown.appendChild(defaultOption);
 
         const saved = JSON.parse(localStorage.getItem('savedAddresses')) || [];
@@ -428,7 +427,7 @@
           return;
         }
 
-        map.setView([lat, lng], 14);  // or however you want to adjust the zoom
+        map.setView([lat, lng], 17);  
       });
 
       
