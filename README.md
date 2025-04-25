@@ -9,6 +9,8 @@ In this assignment, we used Docker to containerize 2 python files, routes.py and
 When app.py runs, a Flask app starts, allowing for the user to use the API from their local device by URL. 
 The test_app.py is used to ensure the accuracy of app.py using pytest. Below are instuctions how to run this webiste on your local device.  
 
+Link to public API from the offical TheBus website: https://hea.thebus.org/api_info.asp
+
 ## Before You Begin! 📩
 To begin, you are provided with these files in this GitHub Repostitory. Download them all onto your local device - this includes the Dockerfile, two python files, 2 txt files, 7 html files, and the static folder containing the images on our webiste.
 
