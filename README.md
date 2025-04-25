@@ -33,7 +33,7 @@ docker build -t <dockerhubusername>/<code>:<version> <dockerfile> .
 ```
 #
 
-## Running the API (app.py) on port 5001
+## Running the website port 5000
 
 Example
 ```bash
